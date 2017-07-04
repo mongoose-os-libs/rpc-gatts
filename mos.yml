@@ -1,0 +1,21 @@
+author: mongoose-os
+description: RPC over Bluetooth GATT (server)
+type: lib
+version: 1.0
+
+libs:
+  - origin: https://github.com/mongoose-os-libs/bt-common
+  - origin: https://github.com/mongoose-os-libs/rpc-common
+
+config_schema:
+  - ["rpc.gatts", "o", {title: "Bluetooth settings"}]
+  - ["rpc.gatts.enable", "b", false, {title: "Enable RPC GATTS service"}]
+  - ["rpc.gatts.is_trusted", "b", true, {title: "Whether this channel can be used for privileged commands, such as changing configuration"}]
+
+tags:
+  - bt
+  - bluetooth
+  - c
+  - rpc
+
+skeleton_version: 2017-06-16
