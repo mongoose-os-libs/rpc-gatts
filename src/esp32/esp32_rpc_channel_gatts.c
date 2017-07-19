@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 #include "mg_rpc.h"
-#include "fw/src/mgos_hal.h"
+#include "mgos_hal.h"
 #include "mgos_rpc.h"
 
 #include "common/cs_dbg.h"
