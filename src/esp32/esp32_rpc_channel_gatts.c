@@ -16,7 +16,7 @@
 
 #include "common/cs_dbg.h"
 
-#include "esp32_bt.h"
+#include "esp32_bt_gatts.h"
 
 #ifndef MGOS_RPC_CHANNEL_GATTS_MAX_FRAME_LEN
 #define MGOS_RPC_CHANNEL_GATTS_MAX_FRAME_LEN 8192
