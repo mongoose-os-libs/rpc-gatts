@@ -224,8 +224,7 @@ struct mg_rpc_channel *mg_rpc_ch_gatt(struct esp32_bt_session *bs) {
 
 void chan_add(void *arg) {
   struct mg_rpc_channel *ch = (struct mg_rpc_channel *) arg;
-  mg_rpc_add_channel(mgos_rpc_get_global(), mg_mk_str(""), ch,
-                     mgos_sys_config_get_rpc_gatts_is_trusted());
+  mg_rpc_add_channel(mgos_rpc_get_global(), mg_mk_str(""), ch);
   ch->ev_handler(ch, MG_RPC_CHANNEL_OPEN, NULL);
 }
 

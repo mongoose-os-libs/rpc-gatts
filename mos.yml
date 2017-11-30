@@ -10,7 +10,6 @@ libs:
 config_schema:
   - ["rpc.gatts", "o", {title: "Bluetooth settings"}]
   - ["rpc.gatts.enable", "b", false, {title: "Enable RPC GATTS service"}]
-  - ["rpc.gatts.is_trusted", "b", true, {title: "Whether this channel can be used for privileged commands, such as changing configuration"}]
 
 tags:
   - bt
