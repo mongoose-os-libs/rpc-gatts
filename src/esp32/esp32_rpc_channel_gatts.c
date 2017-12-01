@@ -10,11 +10,11 @@
 
 #include <stdlib.h>
 
-#include "mg_rpc.h"
+#include "common/cs_dbg.h"
+
 #include "mgos_hal.h"
 #include "mgos_rpc.h"
-
-#include "common/cs_dbg.h"
+#include "mgos_sys_config.h"
 
 #include "esp32_bt_gatts.h"
 
@@ -400,7 +400,10 @@ static bool mgos_rpc_ch_gatts_ev(struct esp32_bt_session *bs,
 }
 
 bool mgos_rpc_gatts_init(void) {
-  if (mgos_rpc_get_global() == NULL) return true;
+  if (mgos_rpc_get_global() == NULL ||
+      !mgos_sys_config_get_rpc_gatts_enable()) {
+    return true;
+  }
   mgos_bt_gatts_register_service(
       mos_rpc_gatt_db, sizeof(mos_rpc_gatt_db) / sizeof(mos_rpc_gatt_db[0]),
       mgos_rpc_ch_gatts_ev);

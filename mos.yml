@@ -9,7 +9,7 @@ libs:
 
 config_schema:
   - ["rpc.gatts", "o", {title: "Bluetooth settings"}]
-  - ["rpc.gatts.enable", "b", false, {title: "Enable RPC GATTS service"}]
+  - ["rpc.gatts.enable", "b", true, {title: "Enable RPC GATTS service"}]
 
 tags:
   - bt
