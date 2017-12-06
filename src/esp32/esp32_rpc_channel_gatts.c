@@ -54,6 +54,7 @@ static const esp_bt_uuid_t mos_rpc_rx_ctl_uuid = {
         },
 };
 static uint16_t mos_rpc_rx_ctl_ah;
+static uint16_t mos_rpc_rx_ctl_cc_ah;
 
 static const esp_bt_uuid_t mos_rpc_tx_ctl_uuid = {
     .len = ESP_UUID_LEN_128,
@@ -66,7 +67,7 @@ static const esp_bt_uuid_t mos_rpc_tx_ctl_uuid = {
 };
 static uint16_t mos_rpc_tx_ctl_ah;
 
-const esp_gatts_attr_db_t mos_rpc_gatt_db[7] = {
+const esp_gatts_attr_db_t mos_rpc_gatt_db[] = {
     {
      .attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
      .att_desc =
@@ -95,6 +96,9 @@ const esp_gatts_attr_db_t mos_rpc_gatt_db[7] = {
     {{ESP_GATT_RSP_BY_APP},
      {ESP_UUID_LEN_128, (uint8_t *) mos_rpc_rx_ctl_uuid.uuid.uuid128,
       ESP_GATT_PERM_READ, 0, 0, NULL}},
+    {{ESP_GATT_RSP_BY_APP},
+     {ESP_UUID_LEN_16, (uint8_t *) &char_client_config_uuid,
+      ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE, 0, 0, NULL}},
 
     /* tx_ctl */
     {{ESP_GATT_AUTO_RSP},
@@ -112,6 +116,7 @@ struct mg_rpc_gatts_ch_data {
   uint16_t expected_flen;
   struct mg_str receiving_frame;
   struct mg_rpc_channel *ch;
+  bool notify;
 };
 
 struct mg_rpc_gatts_rx_ctl_read_resp {
@@ -140,12 +145,14 @@ static bool mg_rpc_ch_gatts_send_frame(struct mg_rpc_channel *ch,
   chd->sending_frame = mg_strdup(f);
   if (chd->sending_frame.p == NULL) goto out;
   chd->send_offset = 0;
-  struct mg_rpc_gatts_rx_ctl_notify_data nd = {
-      .frame_len = htonl(f.len),
-  };
-  esp_ble_gatts_send_indicate(chd->bs->bc->gatt_if, chd->bs->bc->conn_id,
-                              mos_rpc_rx_ctl_ah, sizeof(nd), (uint8_t *) &nd,
-                              false /* need_confirm */);
+  if (chd->notify) {
+    struct mg_rpc_gatts_rx_ctl_notify_data nd = {
+        .frame_len = htonl(f.len),
+    };
+    esp_ble_gatts_send_indicate(chd->bs->bc->gatt_if, chd->bs->bc->conn_id,
+                                mos_rpc_rx_ctl_ah, sizeof(nd), (uint8_t *) &nd,
+                                false /* need_confirm */);
+  }
   ret = true;
 out:
   mgos_unlock();
@@ -354,10 +361,12 @@ static bool mgos_rpc_ch_gatts_ev(struct esp32_bt_session *bs,
       uint16_t svch = p->handles[0];
       mos_rpc_data_ah = p->handles[2];
       mos_rpc_rx_ctl_ah = p->handles[4];
-      mos_rpc_tx_ctl_ah = p->handles[6];
-      LOG(LL_DEBUG,
-          ("svch = %d data_ah = %d rx_ctl_ah = %d tx_ctl_ah = %d", svch,
-           mos_rpc_data_ah, mos_rpc_rx_ctl_ah, mos_rpc_tx_ctl_ah));
+      mos_rpc_rx_ctl_cc_ah = p->handles[5];
+      mos_rpc_tx_ctl_ah = p->handles[7];
+      LOG(LL_DEBUG, ("svch = %d data_ah = %d rx_ctl_ah = %d "
+                     "rx_ctl_cc_ah = %d tx_ctl_ah = %d",
+                     svch, mos_rpc_data_ah, mos_rpc_rx_ctl_ah,
+                     mos_rpc_rx_ctl_cc_ah, mos_rpc_tx_ctl_ah));
       break;
     }
     case ESP_GATTS_CONNECT_EVT: {
@@ -384,6 +393,10 @@ static bool mgos_rpc_ch_gatts_ev(struct esp32_bt_session *bs,
         ret = mgos_rpc_ch_gatts_write_data(chd, p->len, p->value);
       } else if (p->handle == mos_rpc_tx_ctl_ah) {
         ret = mgos_rpc_ch_gatts_write_tx_ctl(chd, p->len, p->value);
+      } else if (p->handle == mos_rpc_rx_ctl_cc_ah) {
+        if (p->len != 2) break;
+        chd->notify = (p->value[0] != 0);
+        ret = true;
       }
       break;
     }
