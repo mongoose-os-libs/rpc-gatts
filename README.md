@@ -5,6 +5,8 @@
 This library provides a GATT service that actes as an RPC channel.
 It accepts incoming frames and can send them as well - or rather, make them available for collection.
 
+*Note*: Default BT configuration is permissive. See https://github.com/mongoose-os-libs/bt-common#security for a better idea.
+
 ## Attribute description
 
 The service UUID is `5f6d4f53-5f52-5043-5f53-56435f49445f`, which is a representation of a 16-byte string `_mOS_RPC_SVC_ID_`.
