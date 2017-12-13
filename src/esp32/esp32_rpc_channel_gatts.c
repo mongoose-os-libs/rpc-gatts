@@ -193,11 +193,6 @@ static bool mg_rpc_channel_gatts_get_authn_info(struct mg_rpc_channel *ch,
   return false;
 }
 
-static bool mg_rpc_ch_gatts_is_persistent(struct mg_rpc_channel *ch) {
-  (void) ch;
-  return false;
-}
-
 static char *mg_rpc_ch_gatts_get_info(struct mg_rpc_channel *ch) {
   struct mg_rpc_gatts_ch_data *chd =
       (struct mg_rpc_gatts_ch_data *) ch->channel_data;
@@ -218,7 +213,8 @@ struct mg_rpc_channel *mg_rpc_ch_gatt(struct esp32_bt_session *bs) {
   ch->ch_close = mg_rpc_ch_gatts_ch_close;
   ch->ch_destroy = mg_rpc_ch_gatts_ch_destroy;
   ch->get_type = mg_rpc_ch_gatts_get_type;
-  ch->is_persistent = mg_rpc_ch_gatts_is_persistent;
+  ch->is_persistent = mg_rpc_channel_false;
+  ch->is_broadcast_enabled = mg_rpc_channel_true;
   ch->get_authn_info = mg_rpc_channel_gatts_get_authn_info;
   ch->get_info = mg_rpc_ch_gatts_get_info;
   struct mg_rpc_gatts_ch_data *chd =
