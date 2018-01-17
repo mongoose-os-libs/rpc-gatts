@@ -149,9 +149,9 @@ static bool mg_rpc_ch_gatts_send_frame(struct mg_rpc_channel *ch,
     struct mg_rpc_gatts_rx_ctl_notify_data nd = {
         .frame_len = htonl(f.len),
     };
-    esp_ble_gatts_send_indicate(chd->bs->bc->gatt_if, chd->bs->bc->conn_id,
-                                mos_rpc_rx_ctl_ah, sizeof(nd), (uint8_t *) &nd,
-                                false /* need_confirm */);
+    mgos_bt_gatts_send_indicate(
+        chd->bs->bc->gatt_if, chd->bs->bc->conn_id, mos_rpc_rx_ctl_ah,
+        mg_mk_str_n((char *) &nd, sizeof(nd)), false /* need_confirm */);
   }
   ret = true;
 out:
