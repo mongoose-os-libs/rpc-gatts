@@ -213,7 +213,7 @@ static char *mg_rpc_ch_gatts_get_info(struct mg_rpc_channel *ch) {
   if (chd->bs != NULL) {
     asprintf(&s, "if %d conn %d peer %s", chd->bs->bc->gatt_if,
              chd->bs->bc->conn_id,
-             mgos_bt_addr_to_str(&chd->bs->bc->peer_addr, abuf));
+             mgos_bt_addr_to_str(&chd->bs->bc->peer_addr, 1, abuf));
   }
   return s;
 }
