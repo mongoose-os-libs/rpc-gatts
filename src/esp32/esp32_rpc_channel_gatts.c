@@ -24,6 +24,8 @@
 
 #include "common/cs_dbg.h"
 
+#include "mongoose.h"  // For hton*
+
 #include "mgos_hal.h"
 #include "mgos_rpc.h"
 #include "mgos_sys_config.h"
