@@ -275,8 +275,9 @@ static bool mgos_rpc_ch_gatts_read_data(struct mg_rpc_gatts_ch_data *chd,
   mgos_lock();
   size_t len = chd->sending_frame.len - chd->send_offset;
   if (len > ESP_GATT_MAX_ATTR_LEN) len = ESP_GATT_MAX_ATTR_LEN;
-  if (len > chd->bs->bc->mtu) len = chd->bs->bc->mtu - 1;
-  LOG(LL_DEBUG, ("%p sending %d @ %d", chd->ch, len, chd->send_offset));
+  if (len > chd->bs->bc->mtu) len = chd->bs->bc->mtu - 2;
+  LOG(LL_DEBUG, ("%p sending %d @ %d, mtu %d", chd->ch, len, chd->send_offset,
+                 chd->bs->bc->mtu));
   esp_gatt_rsp_t rsp = {
       .attr_value = {.handle = mos_rpc_data_ah, .offset = 0, .len = len}};
   memcpy(rsp.attr_value.value, chd->sending_frame.p + chd->send_offset, len);
