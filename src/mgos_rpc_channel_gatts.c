@@ -156,7 +156,7 @@ static enum mgos_bt_gatt_status mgos_bt_rpc_svc_ev(struct mgos_bt_gatts_conn *c,
       ch->ev_handler(ch, MG_RPC_CHANNEL_OPEN, NULL);
       return MGOS_BT_GATT_STATUS_OK;
     }
-    case MGOS_BT_GATTS_EV_CLOSE: {
+    case MGOS_BT_GATTS_EV_DISCONNECT: {
       struct mg_rpc_channel *ch = (struct mg_rpc_channel *) c->user_data;
       struct mg_rpc_gatts_ch_data *chd =
           (struct mg_rpc_gatts_ch_data *) ch->channel_data;
@@ -300,17 +300,17 @@ out:
 static const struct mgos_bt_gatts_char_def s_rpc_svc_def[] = {
     {
      .uuid = "5f6d4f53-5f52-5043-5f64-6174615f5f5f", /* _mOS_RPC_data___ */
-     .prop = MGOS_BT_GATTS_PROP_RWNI(1, 1, 0, 0),
+     .prop = MGOS_BT_GATT_PROP_RWNI(1, 1, 0, 0),
      .handler = mgos_bt_rpc_data_ev,
     },
     {
      .uuid = "5f6d4f53-5f52-5043-5f72-785f63746c5f", /* _mOS_RPC_rx_ctl_ */
-     .prop = MGOS_BT_GATTS_PROP_RWNI(1, 0, 1, 1),
+     .prop = MGOS_BT_GATT_PROP_RWNI(1, 0, 1, 1),
      .handler = mgos_bt_rpc_rx_ctl_ev,
     },
     {
      .uuid = "5f6d4f53-5f52-5043-5f74-785f63746c5f", /* _mOS_RPC_tx_ctl_ */
-     .prop = MGOS_BT_GATTS_PROP_RWNI(0, 1, 0, 0),
+     .prop = MGOS_BT_GATT_PROP_RWNI(0, 1, 0, 0),
      .handler = mgos_bt_rpc_tx_ctl_ev,
     },
     {.uuid = NULL},
