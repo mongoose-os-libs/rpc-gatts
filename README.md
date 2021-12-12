@@ -48,3 +48,5 @@ Three attributes are defined:
 - You'll see the middle read only characteristic will have changed to let us know data is ready
 - Click 'read' on the top read/write characteristic we just entered the scan command into. It'll start pulling the data of the scan results! You can click it multiple times to scroll through the data till the end.
 - You can repeat the request by clicking the write only characteristic to send it our command length, then paste our command again, and click write.
+
+See [tools/rpc.py](tools/rpc.py) for example implementation.
